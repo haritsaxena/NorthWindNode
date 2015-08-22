@@ -11,52 +11,72 @@ var should = require('should'),
 /**
  * Globals
  */
-var user, category;
+var category;
 
 /**
  * Unit tests
  */
 describe('Category Model Unit Tests:', function() {
-	beforeEach(function(done) {
-		user = new User({
-			firstName: 'Full',
-			lastName: 'Name',
-			displayName: 'Full Name',
-			email: 'test@test.com',
-			username: 'username',
-			password: 'password'
+
+	describe('Saving', function(){
+		it('saves new record', function(done){
+			category = new Category({
+				name: 'Beverages',
+				description: 'Soft drinks, coffees, teas, beers, and ales'
+			});
+			category.save(function (err) {
+				should.not.exist(err);
+				done();
+			});
 		});
 
-		user.save(function() { 
+		it('throws validation error when name is empty', function (done) {
+			category = new Category();
+			category.name = '';
+			category.description = 'Soft drinks, coffees, teas, beers, and ales';
+
+			category.save(function (err) {
+				should.exist(err);
+				done();
+			});
+		});
+
+		it('throws validation error when name longer than 15 chars', function (done) {
 			category = new Category({
-				// Add model fields
-				// ...
+				name: 'Soft drinks, coffees, teas, beers, and ales'
 			});
 
-			done();
+			category.save(function (err) {
+				should.exist(err);
+				err.errors.name.message.should.equal('name must be less than 15 chars');
+				done();
+			});
 		});
-	});
 
-	describe('Method Save', function() {
-		it('saves new record');
+		it('throws validation error for duplicate category name', function (done) {
+			var category = new Category({
+				name: 'Beverages'
+			});
 
-		it('throws validation error when name is empty');
+			category.save(function(err) {
+				should.not.exist(err);
 
-		it('throws validation error when name longer than 15 chars');
+				var duplicate = new Category({
+					name: 'Beverages'
+				});
 
-		it('throws validation error for duplicate category name');
-		//it('should be able to save without problems', function(done) {
-		//	return category.save(function(err) {
-		//		should.not.exist(err);
-		//		done();
-		//	});
-		//});
+				duplicate.save(function(err) {
+					err.err.indexOf('$name').should.not.equal(-1);
+					err.err.indexOf('duplicate key error').should.not.equal(-1);
+					should.exist(err);
+					done();
+				});
+			});
+		});
 	});
 
 	afterEach(function(done) { 
 		Category.remove().exec();
-		User.remove().exec();
-
 		done();
 	});
 });
