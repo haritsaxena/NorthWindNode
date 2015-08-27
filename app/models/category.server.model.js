@@ -13,7 +13,7 @@ function validateLength(v){
  * Category Schema
  */
 var CategorySchema = new Schema({
-	// Category model fields   
+	// Category model fields
 	// ...
 	created : {
 		type : Date,
