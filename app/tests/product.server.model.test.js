@@ -50,8 +50,8 @@ describe('Product Model Unit Tests:', function() {
 						quantityPerUnit: 'one',
 						unitsInStock: 24,
 						unitsOnOrder: 12,
-						category: category._id,
-						user:user._id
+						category: category.id,
+						user:user.id
 					});
 
 					return product.save(function(err) {

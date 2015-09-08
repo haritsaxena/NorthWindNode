@@ -16,7 +16,7 @@ exports.create = function(req, res) {
 	//product.user = req.user;
 
 	product.save(function(err) {
-		console.log(err);
+		//console.log(err);
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
@@ -74,8 +74,10 @@ exports.delete = function(req, res) {
 /**
  * List of Products
  */
-exports.list = function(req, res) { 
+exports.list = function(req, res) {
+	// population with full oject and specific fields
 	Product.find().sort('-created').populate('user', 'displayName').exec(function(err, products) {
+	//Product.find().sort('-created').populate('user').exec(function(err, products) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)

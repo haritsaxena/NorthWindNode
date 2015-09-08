@@ -63,81 +63,82 @@ describe('Product CRUD tests', function() {
 		done();
 	});
 
-	//it('should be able to save Product instance if logged in', function(done) {
-	//	agent.post('/auth/signin')
-	//		.send(credentials)
-	//		.expect(200)
-	//		.end(function(signinErr, signinRes) {
-	//			// Handle signin error
-	//			if (signinErr) done(signinErr);
-    //
-	//			// Get the userId
-	//			var userId = user.id;
-	//			var categoryId = category.id;
-    //
-	//			// Save a new Product
-	//			agent.post('/products')
-	//				.send(product)
-	//				.expect(200)
-	//				.end(function(productSaveErr, productSaveRes) {
-	//					// Handle Product save error
-	//					if (productSaveErr) done('secondfail' + productSaveErr);
-    //
-	//					// Get a list of Products
-	//					agent.get('/products')
-	//						.end(function(productsGetErr, productsGetRes) {
-	//							// Handle Product save error
-	//							if (productsGetErr) done(productsGetErr);
-    //
-	//							// Get Products list
-	//							var products = productsGetRes.body;
-	//							// Set assertions
-	//							(products[0].category).should.equal(categoryId);
-	//							(products[0].name).should.match('Product Name');
-    //
-	//							// Call the assertion callback
-	//							done();
-	//						});
-	//				});
-	//		});
-	//});
-    //
-	//it('should not be able to save Product instance if not logged in', function(done) {
-	//	agent.post('/products')
-	//		.send(product)
-	//		.expect(401)
-	//		.end(function(productSaveErr, productSaveRes) {
-	//			// Call the assertion callback
-	//			done(productSaveErr);
-	//		});
-	//});
+	it('should be able to save Product instance if logged in', function(done) {
+		agent.post('/auth/signin')
+			.send(credentials)
+			.expect(200)
+			.end(function(signinErr, signinRes) {
+				// Handle signin error
+				if (signinErr) done(signinErr);
 
-	//it('should not be able to save Product instance if no name is provided', function(done) {
-	//	// Invalidate name field
-    //
-	//	agent.post('/auth/signin')
-	//		.send(credentials)
-	//		.expect(200)
-	//		.end(function(signinErr, signinRes) {
-	//			// Handle signin error
-	//			if (signinErr) done(signinErr);
-    //
-	//			// Get the userId
-	//			//var userId = user.id;
-	//			product.name = '';
-	//			// Save a new Product
-	//			agent.post('/products')
-	//				.send(product)
-	//				.expect(400)
-	//				.end(function(productSaveErr, productSaveRes) {
-	//					// Set message assertion
-	//					(productSaveRes.body.message).should.match('name cannot be blank');
-    //
-	//					// Handle Product save error
-	//					done(productSaveErr);
-	//				});
-	//		});
-	//});
+				// Get the userId
+				var userId = user.id;
+				var categoryId = category.id;
+				// Save a new Product
+				agent.post('/products')
+					.send(product)
+					.expect(200)
+					.end(function(productSaveErr, productSaveRes) {
+						// Handle Product save error
+						if (productSaveErr) done('secondfail' + productSaveErr);
+
+						// Get a list of Products
+						agent.get('/products')
+							.end(function(productsGetErr, productsGetRes) {
+								// Handle Product save error
+								if (productsGetErr) done(productsGetErr);
+
+								// Get Products list
+								var products = productsGetRes.body;
+								//console.log(products);
+								// Set assertions
+								(products[0].category).should.match(categoryId);
+								(products[0].user._id).should.match(userId);
+								(products[0].name).should.match('Product Name');
+
+								// Call the assertion callback
+								done();
+							});
+					});
+			});
+	});
+
+	it('should not be able to save Product instance if not logged in', function(done) {
+		agent.post('/products')
+			.send(product)
+			.expect(401)
+			.end(function(productSaveErr, productSaveRes) {
+				// Call the assertion callback
+				done(productSaveErr);
+			});
+	});
+
+	it('should not be able to save Product instance if no name is provided', function(done) {
+		// Invalidate name field
+
+		agent.post('/auth/signin')
+			.send(credentials)
+			.expect(200)
+			.end(function(signinErr, signinRes) {
+				// Handle signin error
+				if (signinErr) done(signinErr);
+
+				// Get the userId
+				//var userId = user.id;
+				product.name = '';
+				// Save a new Product
+				agent.post('/products')
+					.send(product)
+					.expect(400)
+					.end(function(productSaveErr, productSaveRes) {
+						// Set message assertion
+						(productSaveRes.body.message).should.match('name cannot be blank');
+
+						// Handle Product save error
+						done(productSaveErr);
+					});
+			});
+	});
 
 	it('should be able to update Product instance if signed in', function(done) {
 		agent.post('/auth/signin')
@@ -161,7 +162,6 @@ describe('Product CRUD tests', function() {
 						// Update Product name
 						product.name = 'WHY YOU GOTTA BE SO MEAN?';
 
-						console.log(product);
 						// Update existing Product
 						agent.put('/products/' + productSaveRes.body._id)
 							.send(product)
@@ -181,102 +181,102 @@ describe('Product CRUD tests', function() {
 			});
 	});
     //
-	//it('should be able to get a list of Products if not signed in', function(done) {
-	//	// Create new Product model instance
-	//	var productObj = new Product(product);
-    //
-	//	// Save the Product
-	//	productObj.save(function() {
-	//		// Request Products
-	//		request(app).get('/products')
-	//			.end(function(req, res) {
-	//				// Set assertion
-	//				res.body.should.be.an.Array.with.lengthOf(1);
-    //
-	//				// Call the assertion callback
-	//				done();
-	//			});
-    //
-	//	});
-	//});
-    //
-    //
-	//it('should be able to get a single Product if not signed in', function(done) {
-	//	// Create new Product model instance
-	//	var productObj = new Product(product);
-    //
-	//	// Save the Product
-	//	productObj.save(function() {
-	//		request(app).get('/products/' + productObj._id)
-	//			.end(function(req, res) {
-	//				// Set assertion
-	//				res.body.should.be.an.Object.with.property('name', product.name);
-    //
-	//				// Call the assertion callback
-	//				done();
-	//			});
-	//	});
-	//});
-    //
-	//it('should be able to delete Product instance if signed in', function(done) {
-	//	agent.post('/auth/signin')
-	//		.send(credentials)
-	//		.expect(200)
-	//		.end(function(signinErr, signinRes) {
-	//			// Handle signin error
-	//			if (signinErr) done(signinErr);
-    //
-	//			// Get the userId
-	//			var userId = user.id;
-    //
-	//			// Save a new Product
-	//			agent.post('/products')
-	//				.send(product)
-	//				.expect(200)
-	//				.end(function(productSaveErr, productSaveRes) {
-	//					// Handle Product save error
-	//					if (productSaveErr) done(productSaveErr);
-    //
-	//					// Delete existing Product
-	//					agent.delete('/products/' + productSaveRes.body._id)
-	//						.send(product)
-	//						.expect(200)
-	//						.end(function(productDeleteErr, productDeleteRes) {
-	//							// Handle Product error error
-	//							if (productDeleteErr) done(productDeleteErr);
-    //
-	//							// Set assertions
-	//							(productDeleteRes.body._id).should.equal(productSaveRes.body._id);
-    //
-	//							// Call the assertion callback
-	//							done();
-	//						});
-	//				});
-	//		});
-	//});
-    //
-	//it('should not be able to delete Product instance if not signed in', function(done) {
-	//	// Set Product user
-	//	product.user = user;
-    //
-	//	// Create new Product model instance
-	//	var productObj = new Product(product);
-    //
-	//	// Save the Product
-	//	productObj.save(function() {
-	//		// Try deleting Product
-	//		request(app).delete('/products/' + productObj._id)
-	//		.expect(401)
-	//		.end(function(productDeleteErr, productDeleteRes) {
-	//			// Set message assertion
-	//			(productDeleteRes.body.message).should.match('User is not logged in');
-    //
-	//			// Handle Product error error
-	//			done(productDeleteErr);
-	//		});
-    //
-	//	});
-	//});
+	it('should be able to get a list of Products if not signed in', function(done) {
+		// Create new Product model instance
+		var productObj = new Product(product);
+
+		// Save the Product
+		productObj.save(function() {
+			// Request Products
+			request(app).get('/products')
+				.end(function(req, res) {
+					// Set assertion
+					res.body.should.be.an.Array.with.lengthOf(1);
+
+					// Call the assertion callback
+					done();
+				});
+
+		});
+	});
+
+
+	it('should be able to get a single Product if not signed in', function(done) {
+		// Create new Product model instance
+		var productObj = new Product(product);
+
+		// Save the Product
+		productObj.save(function() {
+			request(app).get('/products/' + productObj._id)
+				.end(function(req, res) {
+					// Set assertion
+					res.body.should.be.an.Object.with.property('name', product.name);
+
+					// Call the assertion callback
+					done();
+				});
+		});
+	});
+
+	it('should be able to delete Product instance if signed in', function(done) {
+		agent.post('/auth/signin')
+			.send(credentials)
+			.expect(200)
+			.end(function(signinErr, signinRes) {
+				// Handle signin error
+				if (signinErr) done(signinErr);
+
+				// Get the userId
+				var userId = user.id;
+
+				// Save a new Product
+				agent.post('/products')
+					.send(product)
+					.expect(200)
+					.end(function(productSaveErr, productSaveRes) {
+						// Handle Product save error
+						if (productSaveErr) done(productSaveErr);
+
+						// Delete existing Product
+						agent.delete('/products/' + productSaveRes.body._id)
+							.send(product)
+							.expect(200)
+							.end(function(productDeleteErr, productDeleteRes) {
+								// Handle Product error error
+								if (productDeleteErr) done(productDeleteErr);
+
+								// Set assertions
+								(productDeleteRes.body._id).should.equal(productSaveRes.body._id);
+
+								// Call the assertion callback
+								done();
+							});
+					});
+			});
+	});
+
+	it('should not be able to delete Product instance if not signed in', function(done) {
+		// Set Product user
+		product.user = user;
+
+		// Create new Product model instance
+		var productObj = new Product(product);
+
+		// Save the Product
+		productObj.save(function() {
+			// Try deleting Product
+			request(app).delete('/products/' + productObj._id)
+			.expect(401)
+			.end(function(productDeleteErr, productDeleteRes) {
+				// Set message assertion
+				(productDeleteRes.body.message).should.match('User is not logged in');
+
+				// Handle Product error error
+				done(productDeleteErr);
+			});
+
+		});
+	});
 
 	afterEach(function(done) {
 		User.remove().exec();
