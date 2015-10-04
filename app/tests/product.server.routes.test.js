@@ -57,8 +57,8 @@ describe('Product CRUD tests', function() {
 					unitsOnOrder: 12,
 					category: category._id,
 					user: user._id
-				}
-			})
+				};
+			});
 		});
 		done();
 	});

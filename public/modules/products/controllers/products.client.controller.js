@@ -1,9 +1,11 @@
 'use strict';
 
 // Products controller
-angular.module('products').controller('ProductsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Products',
-	function($scope, $stateParams, $location, Authentication, Products) {
+angular.module('products').controller('ProductsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Products', 'Categories',
+	function($scope, $stateParams, $location, Authentication, Products, Categories) {
 		$scope.authentication = Authentication;
+
+		$scope.categories = Categories.query();
 
 		// Create new Product
 		$scope.create = function() {
